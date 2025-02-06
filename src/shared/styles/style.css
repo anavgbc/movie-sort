@@ -1,0 +1,98 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import '@fortawesome/fontawesome-free/css/regular.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* colors */
+    --primary: #141319;
+    --primary-50: #17161c;
+    --primary-100: #1f1e25;
+
+    --secondary: #514889;
+    --secondary-100: #3f386a;
+
+    /* Font Size */
+    --font-xs: 10px;
+    --font-sm: 12px;
+    --font-md: 14px;
+    --font-base: 16px;
+    --font-lg: 18px;
+    --font-xl: 20px;
+    --font-2xl: 24px;
+    --font-3xl: 32px;
+
+    /* Font weight */
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-regular: 400;
+
+    /*  */
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background-color: #fafafa;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background-color: #eaeaea;
+}
+
+@layer utilities {
+  .scrollbar-dark::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background-color: #071022;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: #112855;
+  }
+}
+/* @layer base {
+  @font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+} */
