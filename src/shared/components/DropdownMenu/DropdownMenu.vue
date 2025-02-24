@@ -4,8 +4,6 @@
       <slot />
     </DropdownMenuTrigger>
     <DropdownMenuContent class="p-0">
-      <!-- <DropdownMenuLabel>My Account</DropdownMenuLabel>
-      <DropdownMenuSeparator /> -->
       <DropdownMenuItem
         @click="emit('addToList')"
         v-for="item in menuList"

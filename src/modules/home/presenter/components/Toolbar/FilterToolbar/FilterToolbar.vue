@@ -1,14 +1,12 @@
 <template>
-  <div class="flex w-full justify-between px-12 pb-4 items-center">
+  <div class="flex w-full justify-between pb-4 items-center">
     <div class="w-1/2 flex gap-3 items-center">
-      <div class="w-[60%]">
+      <div class="lg:w-[60%] w-[80%]">
         <SearchField
-          :isFilled="Boolean(filteredMovies)"
           placeholder="Pesquisar por..."
-          v-model="searchValue"
-          @searchValue="handleSearch"
+          @searchValue="(val) => handleSearch(val)"
           @onFocus="showChips = true"
-          @clear="clearSearchField"
+          @clear="handleClearField"
         />
       </div>
       <SearchChip
@@ -33,8 +31,15 @@
       </MyButton>
     </div>
   </div>
-  <div v-if="showGenres" class="flex flex-wrap gap-3 px-16">
-    <GenreChip v-for="genre in genreList" @click="handleSelectGenre(genre)" :isActive="genre.id === selectedGenre?.id">
+  <div
+    v-if="showGenres"
+    class="flex gap-3 overflow-x-auto max-w-full w-full pb-4"
+  >
+    <GenreChip
+      v-for="genre in genreList"
+      @click="handleSelectGenre(genre)"
+      :isActive="genre.id === selectedGenre?.id"
+    >
       {{ genre.name }}
     </GenreChip>
   </div>
@@ -44,14 +49,34 @@
 import MyButton from '@/shared/components/Button/MyButton/MyButton.vue';
 import GenreChip from '@/shared/components/Chip/GenreChip/GenreChip.vue';
 import SearchField from '@/shared/components/Input/SearchField/SearchField.vue';
+import { useMovies } from '@/shared/composables/useMovies';
 import { Genre } from '@/shared/interfaces/Genre';
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
+import { useSearch } from '../../../composables/useSearch';
 import SearchChip from '../../Chip/SearchChip/SearchChip.vue';
+
+interface Props {
+  genreList: any[];
+  searchOptions: any[];
+  selectedOption: number;
+}
+
+defineProps<Props>();
+
+const { clearSearchField, inputValue, isInputFilled } = useSearch();
+const { clearFilteredMovies } = useMovies();
+
+const emit = defineEmits([
+  'searchValue',
+  'onFocus',
+  'clear',
+  'searchOption',
+  'filterGenre',
+]);
 
 const showChips = ref<boolean>(false);
 const showGenres = ref<boolean>(false);
 
-const searchValue = defineModel({ type: String });
 const selectedGenre = ref<Genre | null>(null);
 
 const handleSelectGenre = (genre: Genre) => {
@@ -59,27 +84,16 @@ const handleSelectGenre = (genre: Genre) => {
   emit('filterGenre', genre);
 };
 
-interface Props {
-  filteredMovies: any;
-  genreList: any[];
-  searchOptions: any[];
-  selectedOption: number;
-}
-
-const props = defineProps<Props>();
-
-console.log(props.genreList)
-
-const emit = defineEmits(['searchValue', 'onFocus', 'clear', 'searchOption', 'filterGenre']);
-
-const handleSearch = async () => {
-  if (searchValue.value === '' && searchValue.value.length < 2) {
+const handleSearch = async (val) => {
+  console.log('chegou aqui? ', val)
+  if (val === '' && val.length < 2) {
     return;
   }
-  emit('searchValue', searchValue.value);
+  emit('searchValue', val);
 };
 
-const clearSearchField = inject('clearSearchField') as
-  | ((...args: any[]) => any)
-  | undefined;
+const handleClearField = () => {
+  clearSearchField();
+  clearFilteredMovies();
+};
 </script>

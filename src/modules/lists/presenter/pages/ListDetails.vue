@@ -26,7 +26,6 @@ import { ListService } from '@/shared/client/services/listService';
 import MyButton from '@/shared/components/Button/MyButton/MyButton.vue';
 import MovieCard from '@/shared/components/Cards/MovieCard/MovieCard.vue';
 import CreateListDialog from '@/shared/components/Dialog/CreateListDialog.vue';
-import { token } from '@/shared/utils/token';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -39,11 +38,30 @@ const listId = useRoute().params.id;
 
 const isOpenCreateListDialog = ref(false);
 
-const listService = new ListService(token);
+const listService = new ListService();
 const list = ref<any>(null);
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleString("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+};
+
+const formatListDate = () => {
+  list.value.created_at = formatDate(list.value.created_at);
+};
 
 const getCurrentList = async () => {
   list.value = await listService.getList(listId as string);
+  
+  if(list.value) {
+    formatListDate();
+  }
   console.log(list.value);
 };
 

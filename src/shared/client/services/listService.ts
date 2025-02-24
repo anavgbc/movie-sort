@@ -56,7 +56,6 @@ export class ListService extends ApiService implements ListService {
       const { data } = await this.apiInstance.patch(`/lists/${listId}`, {
         movies: movies,
       });
-      console.log(data, 'RESPONSE AQUI');
       return data;
     } catch (err) {
       console.error(err);

@@ -1,7 +1,8 @@
 <template>
   <div
-    class="h-20 border border-primary-100 flex items-center px-5 bg-primary-50"
+    class="h-20 border border-primary-100 flex items-center justify-center bg-primary-50"
   >
+  <div class="flex w-[97%] items-center justify-between h-full">
     <p class="w-2/12 font-display text-3xl pl-12 hover:cursor-pointer" @click="router.push('/')">Filmios</p>
     <div class="flex w-10/12 justify-end h-full">
       <div class="flex gap-4 items-center w-1/3 h-full">
@@ -15,6 +16,7 @@
         >
       </div>
     </div>
+  </div>
   </div>
 </template>
 
