@@ -1,15 +1,11 @@
-export default class HomeCarousel {
-  static TRENDING_MOVIES = 1;
-  static POPULAR_MOVIES = 2;
-  static TOP_RATED_MOVIES = 3;
-  static UPCOMING_MOVIES = 4;
-  static POPULAR_TVSHOWS = 5;
-
-  static LIST = [
-    { label: 'Tendências', value: this.TRENDING_MOVIES },
-    { label: 'Filmes Populares', value: this.POPULAR_MOVIES },
-    { label: 'Filmes bem avaliados', value: this.TOP_RATED_MOVIES },
-    { label: 'Em Cartaz', value: this.UPCOMING_MOVIES },
-    { label: 'Séries de TV Populares', value: this.POPULAR_TVSHOWS },
-  ];
-}
+export const CAROUSEL_LIST = [
+  { id: 1, label: 'Têndencias', method: 'getTrendingMovies' },
+  { id: 2, label: 'Filmes Populares', method: 'getPopularMovies' },
+  { id: 3, label: 'Em cartaz', method: 'getUpcomingMovies' },
+  { id: 4, label: 'Filmes bem avaliados', method: 'getTopRatedMovies' },
+  {
+    id: 5,
+    label: 'Séries de TV populares',
+    method: 'getPopularTvShows',
+  },
+];
