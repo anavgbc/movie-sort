@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col gap-4 w-[92%] items-start justify-center">
+  <div class="flex flex-col gap-4 w-full items-start justify-center">
     <p class="font-display font-semibold text-xl text-gray-200">{{ title }}</p>
     <Carousel class="max-w-full">
       <CarouselContent>
         <CarouselItem
           v-for="item in items"
           :key="item.id"
-          class="basis-1/7"
+          class="lg:basis-1/7 basis-auto"
           v-if="!isLoading && items"
         >
           <MovieCard
@@ -15,7 +15,7 @@
             @click="emit('onSelect', item.id)"
           />
         </CarouselItem>
-        <CarouselItem v-for="_ in 8" class="basis-1/7" v-else>
+        <CarouselItem v-for="_ in 8" class="lg:basis-1/7 basis-auto" v-else>
           <MySkeleton />
         </CarouselItem>
       </CarouselContent>

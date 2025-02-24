@@ -5,22 +5,22 @@
       :placeholder="placeholder"
       :class="[variant === 'outline' ? 'bg-transparent' : 'bg-primary-50']"
       v-model="inputValue"
-      @input="(value) => emit('searchValue', value)"
+      @input="emit('searchValue', inputValue)"
       @focus="emit('onFocus')"
       @blur="emit('onBlur')"
     />
     <Button
-      class="bg-transparent absolute right-2 top-1 rounded-md p-0 h-8 w-3 px-6" 
-      :class="isFilled ? 'cursor-pointer' : 'cursor-default'"
-      @click="isFilled && emit('clear')"
+      class="bg-transparent absolute right-2 top-1 rounded-md p-0 h-8 w-3 px-6"
+      :class="isInputFilled ? 'cursor-pointer' : 'cursor-default'"
+      @click="isInputFilled && emit('clear')"
     >
       <i
-      v-if="!isFilled"
+        v-if="!isInputFilled"
         class="fa-solid fa-magnifying-glass text-gray-600"
         :class="[isHovered && 'text-white']"
       />
       <i
-      v-else
+        v-else
         class="fa-solid fa-x text-gray-600"
         :class="[isHovered && 'text-white']"
       />
@@ -29,18 +29,18 @@
 </template>
 
 <script setup lang="ts">
+import { useSearch } from '@/modules/home/presenter/composables/useSearch';
 import { Input } from '@/shared/components/ui/input';
 import { ref } from 'vue';
 import Button from '../../ui/button/Button.vue';
 
 const isHovered = ref(false);
 
-const inputValue = defineModel({ type: String });
+const { inputValue, isInputFilled } = useSearch();
 
 interface Props {
   placeholder?: string;
   variant?: 'outline' | 'solid';
-  isFilled?: boolean;
 }
 
 defineProps<Props>();
