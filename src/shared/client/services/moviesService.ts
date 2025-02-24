@@ -1,3 +1,4 @@
+import { Genre } from '@/shared/interfaces/Genre';
 import { Movie, MovieDetail, MovieImages } from '../../interfaces/Movie';
 import ApiService from '../apiService';
 
@@ -30,13 +31,13 @@ export class MoviesService extends ApiService implements MoviesService {
       console.error(err);
     }
   }
-  public async getMovie(name: string): Promise<any | void> {
+  public async getMovie(name: string): Promise<Movie | void> {
     try {
       const { data } = await this.apiInstance.get<Response>(
         `/search/movie?query=${name}`
       );
 
-      return data.results;
+      return data.results as Movie;
     } catch (err) {
       console.error(err);
     }
@@ -52,13 +53,13 @@ export class MoviesService extends ApiService implements MoviesService {
       console.error(err);
     }
   }
-  public async getMovieByGenre(genreId: string): Promise<any> {
+  public async getMovieByGenre(genreId: number): Promise<Movie[] | void> {
     try {
-      const { data } = await this.apiInstance.get(
+      const { data } = await this.apiInstance.get<Response>(
         `discover/movie?with_genres=${genreId}`
       );
 
-      return data;
+      return data.results as Movie[];
     } catch (err) {
       console.error(err);
     }
@@ -102,41 +103,44 @@ export class MoviesService extends ApiService implements MoviesService {
     }
   }
 
-  public async getTrendingMovies() {
+  public async getTrendingMovies(): Promise<Movie[] | void> {
     try {
-      const { data } = await this.apiInstance.get('/trending/movie/day');
+      const { data } = await this.apiInstance.get<Response>(
+        '/trending/movie/day'
+      );
 
-      return data;
+      return data.results as Movie[];
     } catch (err) {
       console.error(err);
     }
   }
 
-  public async getUpcomingMovies() {
+  public async getUpcomingMovies(): Promise<Movie[] | void> {
     try {
       const { data } = await this.apiInstance.get('/movie/upcoming');
 
-      return data;
+      return data.results as Movie[];
     } catch (err) {
       console.error(err);
     }
   }
 
-  public async getNowPlayingMovies() {
+  public async getNowPlayingMovies(): Promise<Movie[] | void> {
     try {
-      const { data } = await this.apiInstance.get('/movie/now_playing');
+      const { data } =
+        await this.apiInstance.get<Movie[]>('/movie/now_playing');
 
-      return data;
+      return data as Movie[];
     } catch (err) {
       console.error(err);
     }
   }
 
-  public async getGenres(): Promise<any> {
+  public async getGenres(): Promise<Genre[] | void> {
     try {
       const { data } = await this.apiInstance.get('/genre/movie/list');
 
-      return data;
+      return data.genres as Genre[];
     } catch (err) {
       console.error(err);
     }
