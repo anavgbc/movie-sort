@@ -5,7 +5,7 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent class="p-0">
       <DropdownMenuItem
-        @click="item.id === 1 ? emit('delete') : emit('edit')"
+        @click="item.id === 1 ? emit('onDelete') : emit('onEdit')"
         v-for="item in menuList"
         :key="item.id"
         class="hover:bg-[#5e5974] px-6 py-3 hover:cursor-pointer flex items-center"
@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(['onEdit', 'onDelete']);
 
 const menuList = [
   {
@@ -38,5 +38,6 @@ const menuList = [
     title: 'Editar',
     icon: 'fa-regular fa-pen-to-square',
   },
+  
 ];
 </script>
