@@ -10,7 +10,7 @@
 
     <div class="min-h-full w-full flex flex-col items-center justify-center gap-2" v-else>
       <p class="font-display text-lg font-normal w-full" v-if="hasMoviesToShow">
-        Mostrando resultados em {{ selecetdCategory }} para: <b>{{ inputValue }}</b>
+        Mostrando resultados em {{ selecetdCategory }} para: <b>{{ query }}</b>
       </p>
       <div class="flex flex-wrap gap-3 w-full h-[90%]">
         <MovieCard
@@ -24,7 +24,7 @@
         >
           <img src="@/assets/images/Curious-rafiki.svg" class="w-1/4" />
           <p class="text-gray-500">
-            Não foram encontrados resultados para <b>{{ inputValue }}</b>
+            Não foram encontrados resultados para <b>{{ query }}</b>
           </p>
         </div>
       </div>
@@ -37,15 +37,13 @@ import MovieCard from '@/shared/components/Cards/MovieCard/MovieCard.vue';
 import MySpinner from '@/shared/components/Spinner/MySpinner/MySpinner.vue';
 import { Movie } from '@/shared/interfaces/Movie';
 import { computed } from 'vue';
-import { useSearch } from '../../../composables/useSearch';
 
 const props = defineProps<{
   filteredMovies: Array<Movie>;
   category: number;
+  query: string;
   loading: boolean;
 }>();
-
-const {inputValue} = useSearch();
 
 const hasMoviesToShow = computed(() => props.filteredMovies.length > 0);
 

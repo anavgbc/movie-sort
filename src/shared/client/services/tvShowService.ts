@@ -27,9 +27,9 @@ export class TvShowService extends ApiService implements TvShowService {
   }
   public async getShow(name: string): Promise<any> {
     try {
-      const response = await this.apiInstance.get(`/search/tv?query=${name}`);
+      const { data } = await this.apiInstance.get(`/search/tv?query=${name}`);
 
-      return response;
+      return data.results;
     } catch (err) {
       console.error(err);
     }

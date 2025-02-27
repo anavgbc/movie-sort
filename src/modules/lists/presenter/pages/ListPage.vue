@@ -1,78 +1,109 @@
 <template>
-  <div class="bg-primary w-full h-full flex flex-col justify-start gap-5 p-5 px-12">
+  <div
+    class="bg-primary w-full h-full flex flex-col justify-start gap-5 p-5 px-12"
+  >
     <PageControl
       title="Suas listas"
-      btnText="Criar lista"
-      @click="isOpenCreateListDialog = true"
+      btnIcon="fa-solid fa-plus"
+      @click="openDialog(DialogTypes.CREATE)"
+      @onSearch="handlefilter"
     >
-    <MyButton class="p-0 h-full w-8 px-6" variant="outline">
-      <i class="fa-solid fa-pen"></i>
+      <MyButton
+        class="p-0 h-full w-8 px-6"
+        :variant="isEditMode ? 'solid' : 'outline'"
+        @click="isEditMode = !isEditMode"
+      >
+        <i v-if="!isEditMode" class="fa-solid fa-pen" />
+        <i v-else class="fa-solid fa-check" />
       </MyButton>
     </PageControl>
-    <div class="h-[80%] flex justify-start gap-3 flex-wrap" v-if="lists">
-      <ListCard
-        v-for="list in lists"
-        :list="list"
-        :key="list.id"
-        @click="router.push(`/lists/${list.id}`)"
-      />
-    </div>
-    <div v-else class="flex flex-col gap-2 items-center justify-center h-[80%]">
-      <img src="@/assets/images/movie-list.svg" class="w-64 h-64" />
-      <p class="font-display text-gray-400">Não existe nada aqui. Crie sua primeira lista!</p>
-      <p class="text-sm font-display text-gray-500 font-medium">Ex.: Filmes para assistir em 2025</p>
-    </div>
+    <DisplayList
+      :lists="displayLists"
+      :isEditMode="isEditMode"
+      @onClick="handleRedirect"
+      @onDelete="handleOpenAlert"
+    />
   </div>
-
   <CreateListDialog
-    :movieList="[]"
-    v-model:open="isOpenCreateListDialog"
-    @createList="createList"
+    v-if="isDialogOpen(DialogTypes.CREATE)"
+    v-model:open="dialogState"
+    @createList="handleCreateList"
+  />
+
+  <MyAlertDialog
+    v-model="alertDialogState"
+    v-if="alertDialogState"
+    :content="alertDialog.DELETE_LIST"
+    @onConfirm="handleDeleteList"
   />
 </template>
 
 <script setup lang="ts">
-import { ListService } from '@/shared/client/services/listService';
 import MyButton from '@/shared/components/Button/MyButton/MyButton.vue';
 import CreateListDialog from '@/shared/components/Dialog/CreateListDialog.vue';
-import { token } from '@/shared/utils/token';
+import MyAlertDialog from '@/shared/components/Dialog/MyAlertDialog.vue';
+import { DialogTypes, useDialog } from '@/shared/composables/useDialog';
+import { useLists } from '@/shared/composables/useLists';
+import { filterList } from '@/shared/helpers/filterList';
+import { List } from '@/shared/interfaces/List';
+import { useListStore } from '@/shared/store/Lists';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
-import ListCard from '../components/Card/ListCard/ListCard.vue';
 import PageControl from '../components/Card/PageControl/PageControl.vue';
+import DisplayList from '../components/DisplayList/DisplayList.vue';
+import { alertDialog } from '../utils/constants/alertDialog';
 
 const router = useRouter();
-const isOpenCreateListDialog = ref(false);
 
-const listService = new ListService(token);
+const { createList, getLists, deleteList } = useLists();
+const {
+  dialogState,
+  toggleDialog,
+  isDialogOpen,
+  openDialog,
+  alertDialogState,
+  toggleDialogAlert,
+} = useDialog();
 
-const lists = ref();
-const images = ref();
+const listStore = useListStore();
 
-const getLists = async () => {
-  try{
-    lists.value = await listService.getLists();
-  }catch(err){
-    console.log(err);
-    toast.error('Erro ao buscar listas');
-};
-}
+const displayLists = ref(listStore.getLists);
 
-const createList = async (listData: any) => {
-
-  const payload = {...listData }
-  const response = await listService.createList(payload);
-  console.log('response: ', response)
-  if (response) {
-    isOpenCreateListDialog.value = false;
-    getLists();
-    toast.success('Lista criada com sucesso');
-  }
+const handlefilter = (val: string) => {
+  displayLists.value = filterList(listStore.getLists, val)
 };
 
-onMounted(() => {
+const isEditMode = ref(false);
+
+const getData = async () => {
+  await getLists();
+  displayLists.value = listStore.getLists;
+};
+
+const handleOpenAlert = (list: List) => {
+  listStore.setSelectedList(list);
+  toggleDialogAlert();
+};
+
+const handleRedirect = (list: List) => {
+  router.push(`/lists/${list.id}`);
+};
+
+const handleDeleteList = async () => {
+  toggleDialogAlert();
+  const { id } = listStore.getSelectedList;
+  if (!id) return;
+  await deleteList(id);
+  getData();
+  isEditMode.value = false;
+};
+
+const handleCreateList = async (payload: any) => {
+  await createList(payload);
   getLists();
-  console.log(lists.value);
+  toggleDialog(DialogTypes.CREATE);
+};
+onMounted(() => {
+  getData();
 });
 </script>

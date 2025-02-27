@@ -1,11 +1,11 @@
 <template>
   <Button
-    class="bg-secondary text-white rounded-md"
+    class="bg-secondary-100 text-white rounded-md"
     :class="{
-      'bg-gradient-md': variant === 'solid',
-      'bg-transparent border-secondary border text-white hover:bg-primary-100':
+      'bg-gradient-md border-none': variant === 'solid',
+      'bg-transparent border-secondary-100 border text-white hover:bg-primary-100':
         variant === 'outline',
-      'bg-transparent text-secondary': variant === 'ghost',
+      'bg-transparent text-secondary border-none': variant === 'ghost',
     }"
   >
     <slot />

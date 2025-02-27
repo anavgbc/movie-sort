@@ -8,6 +8,8 @@ export enum DialogTypes {
 export function useDialog() {
   const dialogState = ref<{ [key in DialogTypes]?: boolean }>({});
 
+  const alertDialogState = ref<boolean>(false);
+
   const openDialog = (dialogName: DialogTypes) => {
     dialogState.value[dialogName] = true;
   };
@@ -24,11 +26,17 @@ export function useDialog() {
     return dialogState.value[dialogName] || false;
   };
 
+  const toggleDialogAlert = () => {
+    alertDialogState.value = !alertDialogState.value;
+  };
+
   return {
     dialogState,
     openDialog,
     closeDialog,
     toggleDialog,
     isDialogOpen,
+    alertDialogState,
+    toggleDialogAlert,
   };
 }

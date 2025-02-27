@@ -93,14 +93,12 @@ export function useMovies() {
   };
 
   const searchMovie = async (searchTerm: string, option: number) => {
-    console.log(searchTerm, option);
     const movies = await getMovieByQuery(searchTerm, option);
 
-    console.log('movies', movies);
     if (movies) {
       setFilteredMovies(movies);
     }
-  }
+  };
 
   const clearFilteredMovies = () => {
     movieStore.setFilteredMovies([]);

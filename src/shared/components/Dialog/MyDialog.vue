@@ -1,56 +1,31 @@
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="sm:max-w-[425px] bg-primary">
+    <DialogContent
+      class="w-[90%] sm:max-w-[425px] bg-primary h-[80%] sm:h-[620px] flex flex-col justify-between"
+    >
       <DialogHeader>
-        <DialogTitle class="font-display text-gray-400">Adicionar à lista</DialogTitle>
-      </DialogHeader>
-      <div class="flex flex-col gap-4 py-4 w-full h-[90%]">
-        <SearchField placeholder="Procurar por..." variant="outline" />
-        <ul class="w-full h-[60%] min-h-60 max-h-64 overflow-y-auto" v-if="lists">
-          <li
-            v-for="item in lists"
-            :key="item.id"
-            class="my-3 hover:cursor-pointer shadow-sm border text-white border-[#ededed] hover:border-[#51488938] px-3 py-3 rounded-md flex justify-between items-center font-display text-sm font-normal"
-            @click="selectedList = item"
-            :class="{
-              'bg-[#9690b730] border-[#51488938]': selectedList === item,
-            }"
-          >
-            <div class="flex gap-2 items-center">
-              <i class="fa-solid fa-list fa-sm"></i>
-              {{ item.name }}
-            </div>
-            <button
-              class="text-white text-xs w-10 py-1 bg-[#51488999] rounded-md flex items-center justify-center gap-2 px-2"
-            >
-              <i class="fa-solid fa-inbox fa-sm"></i>
-              <p>{{ item.movies.length }}</p>
-            </button>
-          </li>
-        </ul>
-
-        <div v-else class="h-[60%] min-h-60 max-h-64 flex flex-col gap-1 items-center justify-center">
-          <img src="@/assets/images/empty-state.svg" class="h-24 w-24" />
-          <p class="font-display text-gray-500 text-sm">Ops! Nada aqui.</p>
-          <p class="font-display text-gray-500 text-sm">Crie sua primeira lista.</p>
-        </div>
-
-        <div
-          class="flex bg-primary-50 gap-2 font-display px-3 shadow-sm hover:cursor-pointer py-3 rounded-md items-center"
-          @click="emit('createList')"
+        <DialogTitle class="font-display text-gray-400"
+          >Adicionar à lista</DialogTitle
         >
-          <span
-            class="bg-secondary rounded-md size-6 px-3 py-2 flex items-center justify-center"
-          >
-            <i class="fa-solid fa-plus text-white"></i>
-          </span>
-          <p class="text-sm font-display text-gray-400">Criar nova lista</p>
-        </div>
+      </DialogHeader>
+      <div class="flex flex-col gap-4 pt-4 w-full h-[85%] text-white">
+        <SearchField
+          placeholder="Procurar por..."
+          variant="outline"
+          v-model="searchValue"
+          @searchValue="handleSearch"
+        />
+        <DialogList
+          :displayLists="displayList"
+          :selectedList="selectedList"
+          @addToList="selectList"
+        />
+       <CreateListButton @onClick="emit('createList')" />
       </div>
       <DialogFooter>
         <Button
           type="submit"
-          class="bg-secondary text-white"
+          class="bg-secondary-100 text-white"
           :disabled="!selectedList"
           @click="handleSubmit"
         >
@@ -70,22 +45,41 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/dialog';
+import { DialogTypes, useDialog } from '@/shared/composables/useDialog';
+import { filterList } from '@/shared/helpers/filterList';
 import { ref } from 'vue';
+import CreateListButton from '../Button/CreateListButton/CreateListButton.vue';
 import SearchField from '../Input/SearchField/SearchField.vue';
-
-const isOpen = defineModel({ type: Boolean });
+import DialogList from '../List/AddDialogList.vue';
 
 interface Props {
   lists: any[];
 }
 
-defineProps<Props>();
+const isOpen = defineModel({ type: Boolean });
+
+const { toggleDialog } = useDialog();
+
+const props = defineProps<Props>();
+
 const emit = defineEmits(['addToList', 'createList']);
 
-const selectedList = ref<any>(null);
+const displayList = ref<any>(props.lists);
+const selectedList = ref<any>([]);
+const searchValue = ref<string>('');
+
+const selectList = (item: any) => {
+  selectedList.value === item
+    ? (selectedList.value = [])
+    : (selectedList.value = item);
+};
+
+const handleSearch = (val: string) => {
+  displayList.value = filterList(props.lists, val);
+};
 
 const handleSubmit = () => {
   emit('addToList', selectedList.value);
-  isOpen.value = false;
+  toggleDialog(DialogTypes.ADD);
 };
 </script>

@@ -1,33 +1,37 @@
 <template>
-  <div class="flex w-full justify-between pb-4 items-center">
-    <div class="w-1/2 flex gap-3 items-center">
-      <div class="lg:w-[60%] w-[80%]">
+  <div class="flex w-full justify-between pb-4 items-start">
+    <div class="w-full sm:w-1/2 flex flex-col sm:flex-row gap-3 items-start">
+      <div class="lg:w-[60%] sm:w-[80%] w-full pr-2">
         <SearchField
           placeholder="Pesquisar por..."
           @searchValue="(val) => handleSearch(val)"
-          @onFocus="showChips = true"
+          @onFocus="toggleShowChips"
           @clear="handleClearField"
+          v-model="searchValue"
         />
       </div>
-      <SearchChip
-        v-if="showChips"
-        :label="option.label"
-        :isActive="selectedOption === option.value"
-        v-for="option in searchOptions"
-        @click="emit('searchOption', option.value)"
-        :key="option.value"
-      />
+      <div class="flex justify-start w-full sm:w-auto gap-2 pt-3">
+        <SearchChip
+          v-if="showChips"
+          :label="option.label"
+          :isActive="selectedOption === option.value"
+          v-for="option in searchOptions"
+          @click="emit('searchOption', option.value)"
+          :key="option.value"
+        />
+      </div>
     </div>
-    <div class="flex gap-2 h-full">
-      <MyButton class="p-0 h-full w-8 px-6" variant="outline">
+    <div class="gap-2 h-12 sm:h-full flex">
+      <!-- <MyButton class="p-0 h-full w-8 px-6 hidden" variant="outline">
         <i class="fa-solid fa-list" />
-      </MyButton>
+      </MyButton> -->
       <MyButton
-        class="p-0 h-full w-8 px-6"
-        :variant="!showGenres ? 'outline' : 'solid'"
+        class="p-0 h-full w-3 px-6"
+        variant="ghost"
         @click="showGenres = !showGenres"
       >
-        <i class="fa-solid fa-chevron-down" />
+        <i v-if="!showGenres" class="fa-solid fa-chevron-down" />
+        <i v-else class="fa-solid fa-chevron-up" />
       </MyButton>
     </div>
   </div>
@@ -49,10 +53,8 @@
 import MyButton from '@/shared/components/Button/MyButton/MyButton.vue';
 import GenreChip from '@/shared/components/Chip/GenreChip/GenreChip.vue';
 import SearchField from '@/shared/components/Input/SearchField/SearchField.vue';
-import { useMovies } from '@/shared/composables/useMovies';
 import { Genre } from '@/shared/interfaces/Genre';
 import { ref } from 'vue';
-import { useSearch } from '../../../composables/useSearch';
 import SearchChip from '../../Chip/SearchChip/SearchChip.vue';
 
 interface Props {
@@ -63,8 +65,8 @@ interface Props {
 
 defineProps<Props>();
 
-const { clearSearchField, inputValue, isInputFilled } = useSearch();
-const { clearFilteredMovies } = useMovies();
+const searchValue = defineModel({ type: String });
+
 
 const emit = defineEmits([
   'searchValue',
@@ -79,13 +81,16 @@ const showGenres = ref<boolean>(false);
 
 const selectedGenre = ref<Genre | null>(null);
 
+const toggleShowChips = () => {
+  showChips.value = !showChips.value;
+};
+
 const handleSelectGenre = (genre: Genre) => {
   selectedGenre.value = genre;
   emit('filterGenre', genre);
 };
 
-const handleSearch = async (val) => {
-  console.log('chegou aqui? ', val)
+const handleSearch = async (val: string) => {
   if (val === '' && val.length < 2) {
     return;
   }
@@ -93,7 +98,8 @@ const handleSearch = async (val) => {
 };
 
 const handleClearField = () => {
-  clearSearchField();
-  clearFilteredMovies();
+  emit('clear');
+  searchValue.value = '';
+  showChips.value = false;
 };
 </script>
