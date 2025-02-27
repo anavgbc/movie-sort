@@ -1,7 +1,7 @@
 <template>
   <MyButton
     :class="{
-      'bg-secondary text-white hover:bg-secondary-100': isActive,
+      'bg-secondary-100 text-white hover:bg-secondary-100': isActive,
       'hover:bg-primary-100': !isActive
     }"
     variant="outline"
