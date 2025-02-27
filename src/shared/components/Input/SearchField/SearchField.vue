@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative w-full">
     <Input
       class="border border-primary-100 w-full rounded-lg pr-5 hover:border-secondary"
       :placeholder="placeholder"
@@ -29,14 +29,15 @@
 </template>
 
 <script setup lang="ts">
-import { useSearch } from '@/modules/home/presenter/composables/useSearch';
 import { Input } from '@/shared/components/ui/input';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import Button from '../../ui/button/Button.vue';
 
 const isHovered = ref(false);
 
-const { inputValue, isInputFilled } = useSearch();
+const inputValue = defineModel({ type: String });
+
+const isInputFilled = computed(() => inputValue.value !== '');
 
 interface Props {
   placeholder?: string;
