@@ -4,15 +4,15 @@
     <Carousel class="max-w-full">
       <CarouselContent>
         <CarouselItem
-          v-for="item in items"
-          :key="item.id"
+          v-for="movie in items"
+          :key="movie.id"
           class="lg:basis-1/7 basis-auto"
           v-if="!isLoading && items"
         >
           <MovieCard
-            :movie="item"
-            @favoriteItem="emit('selectedItem', item)"
-            @click="emit('onSelect', item.id)"
+            :movie="movie"
+            @openDialog="emit('onSelect')"
+            @onFavorite="emit('favoriteMovie', movie)"
           />
         </CarouselItem>
         <CarouselItem v-for="_ in 8" class="lg:basis-1/7 basis-auto" v-else>
@@ -44,5 +44,6 @@ interface Props {
 }
 
 defineProps<Props>();
-const emit = defineEmits(['selectedItem', 'onSelect']);
+
+const emit = defineEmits(['selectedItem', 'onSelect', 'favoriteMovie']);
 </script>
