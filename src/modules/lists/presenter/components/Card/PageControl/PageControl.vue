@@ -2,9 +2,13 @@
   <div class="w-full flex flex-col gap-3">
     <p class="font-medium text-lg">{{ title }}</p>
     <div class="w-full justify-between flex">
-      <SearchField placeholder="Pesquisar por..." class="w-1/3" />
+      <div class="w-1/3">
+      <SearchField placeholder="Pesquisar por..." @searchValue="(val) => emit('onSearch', val)"/>
+      </div>
       <div class="flex gap-2">
-        <MyButton @click="emit('click')">{{ btnText }}</MyButton>
+        <MyButton variant="outline" @click="emit('click')">
+          <i :class="btnIcon" />
+        </MyButton>
         <slot />
       </div>
     </div>
@@ -17,10 +21,10 @@ import SearchField from '@/shared/components/Input/SearchField/SearchField.vue';
 
 interface Props {
   title: string;
-  btnText: string;
+  btnIcon: string;
 }
 
 defineProps<Props>();
 
-const emit = defineEmits(['click']);
+const emit = defineEmits(['click', 'onSearch']);
 </script>

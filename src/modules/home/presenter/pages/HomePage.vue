@@ -10,6 +10,8 @@
         @searchOption="handleChangeCategory"
         :selectedOption="selectedSearchOption"
         @filterGenre="(genre) => setMoviesByGenre(genre)"
+        @clear="inputValue = ''"
+        v-model="inputValue"
       />
       <div class="flex justify-start items-start flex-col gap-2 h-[90%] w-full">
         <div
@@ -22,16 +24,18 @@
             :title="list.label"
             :items="list.items"
             @selectedItem="handleFavorite"
-            @onSelect="openDialog(DialogTypes.ADD)"
             :isLoading="isLoading"
+            @onSelect="toggleDialog(DialogTypes.ADD)"
+            @favoriteMovie="handleFavorite"
           />
         </div>
         <SearchResultList
-          v-else-if="inputValue !== ''"
+          v-else-if="inputValue != ''"
           :category="selectedSearchOption"
           :filteredMovies="filteredMovies"
           @selectedItem="handleSelectedMovie"
           :loading="isLoadingQuery"
+          :query="inputValue"
         />
       </div>
     </div>
@@ -69,7 +73,6 @@ import { useMoviesStore } from '@/shared/store/Movies';
 import { computed, onMounted, ref } from 'vue';
 import Footer from '../components/Footer/Footer.vue';
 import FilterToolbar from '../components/Toolbar/FilterToolbar/FilterToolbar.vue';
-import { useSearch } from '../composables/useSearch';
 import { CAROUSEL_LIST } from '../utils/constants/carouselList';
 
 const movieStore = useMoviesStore();
@@ -83,14 +86,14 @@ const {
   setFilteredMovies,
 } = useMovies();
 
-const { addToFavorite } = useFavorites();
+const { addToFavorite, getFavorites, removeFromFavorite } = useFavorites();
 
-const { addMovieToList, createList } = useLists();
+const { addMovieToList, createList, getLists } = useLists();
 
 const { toggleDialog, dialogState, isDialogOpen, closeDialog, openDialog } =
   useDialog();
 
-const { inputValue } = useSearch();
+const inputValue = ref<string>('');
 
 const isLoadingQuery = ref<boolean>(false);
 const selectedSearchOption = ref(SearchOptions.MOVIES);
@@ -129,8 +132,18 @@ const handleSelectedMovie = (movie: Movie) => {
   movieStore.setSelectedMovie(movie);
 };
 
+const isMovieFavorited = (movie: Movie) => {
+  const favoritesItems = movieStore.getFavoriteMovies;
+
+  return favoritesItems.some((item: Movie) => item.id === movie.id);
+};
+
 const handleFavorite = async (movie: Movie) => {
-  await addToFavorite(movie);
+  isMovieFavorited(movie)
+    ? await removeFromFavorite(movie)
+    : await addToFavorite(movie);
+
+    await getFavorites();
 };
 
 const setMoviesByGenre = async (genre: Genre) => {
@@ -147,7 +160,14 @@ const handleSearch = async () => {
   searchMovie(inputValue.value, selectedSearchOption.value);
 };
 
-onMounted(async () => {
+const initializeData = async () => {
+  movieStore.getPopularMovies ? movieStore.getPopularMovies :
   await getAllData();
+};
+
+onMounted(async () => {
+  await initializeData();
+  getLists();
+  getFavorites();
 });
 </script>
