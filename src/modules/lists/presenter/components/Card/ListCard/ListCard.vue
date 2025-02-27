@@ -2,9 +2,10 @@
   <div
     class="bg-primary-50 w-52 h-64 rounded-md px-4 py-4 hover:bg-primary-100 hover:cursor-pointer border border-[#181826] shadow-md hover:shadow-lg relative"
   >
+    <DeleteMovieBtn @onClick="emit('onDelete')" v-if="isEdit" />
     <div class="h-[70%] w-full">
-      {{ console.log(`http://image.tmdb.org/t/p/w500${listCover}` ) }}
-      <img v-if="listCover != ''"
+      <img
+        v-if="listCover != ''"
         class="w-full h-full rounded-md object-cover opacity-70"
         :src="`http://image.tmdb.org/t/p/w500${listCover}`"
         alt="movie"
@@ -18,34 +19,36 @@
         <i class="fa-solid fa-inbox fa-sm"></i>
         <p>{{ list.movies.length }}</p>
       </button>
-      <!-- <div class="flex gap-2"> -->
-      <!-- <button class="text-white text-xs bg-secondary px-2 py-1 rounded-md">Editar</button>
-        <button class="text-white text-xs bg-secondary px-2 py-1 rounded-md">Excluir</button> -->
-      <!-- </div> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { MoviesService } from '@/shared/client/services/moviesService';
-import { TvShowService } from '@/shared/client/services/tvShowService';
-import { token } from '@/shared/utils/token';
-import { onBeforeMount, ref } from 'vue';
-const movieService = new MoviesService(token);
-const tvShowService = new TvShowService(token);
+import DeleteMovieBtn from '@/shared/components/Button/DeleteMovieBtn/DeleteMovieBtn.vue';
+import { useMovies } from '@/shared/composables/useMovies';
+import { computed, onBeforeMount, ref } from 'vue';
 
 interface Props {
   list: any;
-};
+  isEditable: Boolean;
+}
+
+const { getMovie } = useMovies();
+
 const props = defineProps<Props>();
+const emit = defineEmits(['onDelete']);
+
+const isEdit = computed(() => props.isEditable);
 
 const listCover = ref('');
 
 const getCover = async () => {
   if (props.list.movies.length > 0) {
-    const movie = await movieService.getMovie(props.list.movies[0].title);
-    console.log(movie);
-    if(movie){
+    const movie = await getMovie(props.list.movies[0].title);
+
+    console.log(movie)
+
+    if (movie) {
       listCover.value = movie[0].poster_path;
     }
   }
@@ -54,5 +57,4 @@ const getCover = async () => {
 onBeforeMount(() => {
   getCover();
 });
-
 </script>
