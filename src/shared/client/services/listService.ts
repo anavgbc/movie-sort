@@ -79,4 +79,13 @@ export class ListService extends ApiService implements ListService {
       console.error(err);
     }
   }
+
+  public async removeFromFavorite(movieId: number): Promise<any> {
+    try {
+      const { data } = await this.apiInstance.delete(`/favorites/${movieId}`);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
